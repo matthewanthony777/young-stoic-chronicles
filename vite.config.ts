@@ -3,7 +3,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
-import { mdxDataPlugin } from "./src/plugins/mdx-loader";
+import mdx from "@mdx-js/rollup";
+import remarkFrontmatter from 'remark-frontmatter';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -13,11 +14,11 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     {
-      ...mdxDataPlugin({
+      ...mdx({
         jsx: true,
         providerImportSource: "@mdx-js/react",
         jsxRuntime: "automatic",
-        remarkPlugins: [require("remark-frontmatter")],
+        remarkPlugins: [remarkFrontmatter],
       }) as any,
       enforce: 'pre' as const
     },
