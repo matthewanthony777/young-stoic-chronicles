@@ -1,5 +1,7 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { compile } from "@mdx-js/mdx";
+import remarkFrontmatter from 'remark-frontmatter';
 import * as runtime from "react/jsx-runtime";
 
 interface Article {
@@ -38,11 +40,12 @@ async function fetchMDXFile(filename: string) {
     // Remove frontmatter from content
     const contentWithoutFrontmatter = text.replace(frontmatterRegex, '').trim();
 
-    // Compile MDX content and get the value property which contains the compiled code
+    // Compile MDX content with remark-frontmatter plugin
     const result = await compile(contentWithoutFrontmatter, {
       outputFormat: 'function-body',
       pragma: 'React.createElement',
-      pragmaFrag: 'React.Fragment'
+      pragmaFrag: 'React.Fragment',
+      remarkPlugins: [remarkFrontmatter]
     });
 
     return {
