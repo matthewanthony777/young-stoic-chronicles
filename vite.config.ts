@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => ({
         providerImportSource: "@mdx-js/react",
         jsxRuntime: "automatic",
         remarkPlugins: [require("remark-frontmatter")],
-      }),
-      enforce: 'pre'
+      }) as any,
+      enforce: 'pre' as const
     },
     react(),
     mode === 'development' &&
