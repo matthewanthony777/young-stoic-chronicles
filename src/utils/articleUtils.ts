@@ -38,8 +38,8 @@ async function fetchMDXFile(filename: string) {
     // Remove frontmatter from content
     const contentWithoutFrontmatter = text.replace(frontmatterRegex, '').trim();
 
-    // Compile MDX content using the correct function name
-    const { code } = await compile(contentWithoutFrontmatter, {
+    // Compile MDX content and get the value property which contains the compiled code
+    const result = await compile(contentWithoutFrontmatter, {
       outputFormat: 'function-body',
       pragma: 'React.createElement',
       pragmaFrag: 'React.Fragment'
@@ -47,7 +47,7 @@ async function fetchMDXFile(filename: string) {
 
     return {
       ...metadata,
-      content: code
+      content: String(result.value)
     } as Article;
   } catch (error) {
     console.error('Error fetching MDX file:', error);
