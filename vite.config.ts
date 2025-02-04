@@ -5,16 +5,20 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
   },
   plugins: [
-    mdx({
-      providerImportSource: "@mdx-js/react"
-    }),
+    {
+      ...mdx({
+        providerImportSource: "@mdx-js/react",
+        jsxRuntime: "automatic",
+        remarkPlugins: [require("remark-frontmatter")],
+      }),
+      enforce: 'pre'
+    },
     react(),
     mode === 'development' &&
     componentTagger(),
@@ -24,4 +28,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['@mdx-js/react', 'react/jsx-runtime']
+  }
 }));

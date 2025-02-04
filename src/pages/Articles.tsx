@@ -1,10 +1,23 @@
+
 import { BlogCard } from "@/components/BlogCard";
 import { useArticles } from "@/utils/articleUtils";
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 const Articles = () => {
   const { data: articles, isLoading, error } = useArticles();
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error loading articles",
+        description: "Please try again later",
+      });
+    }
+  }, [error]);
 
   if (error) {
     return (
