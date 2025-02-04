@@ -32,7 +32,7 @@ const Index = () => {
               onClick={() => navigate("/blog")}
               className="bg-sage-600 hover:bg-sage-700"
             >
-              Read Our Blog
+              Read Our Articles
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button
