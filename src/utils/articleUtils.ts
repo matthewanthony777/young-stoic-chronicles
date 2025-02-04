@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { compileMDX } from "@mdx-js/mdx";
+import { compile } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 
 interface Article {
@@ -38,10 +38,11 @@ async function fetchMDXFile(filename: string) {
     // Remove frontmatter from content
     const contentWithoutFrontmatter = text.replace(frontmatterRegex, '').trim();
 
-    // Compile MDX content
-    const { code } = await compileMDX({
-      source: contentWithoutFrontmatter,
-      runtime
+    // Compile MDX content using the correct function name
+    const { code } = await compile(contentWithoutFrontmatter, {
+      outputFormat: 'function-body',
+      pragma: 'React.createElement',
+      pragmaFrag: 'React.Fragment'
     });
 
     return {
