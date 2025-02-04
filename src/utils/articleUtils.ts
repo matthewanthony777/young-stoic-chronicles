@@ -23,7 +23,7 @@ async function fetchMDXFile(filename: string) {
     }
     const text = await response.text();
     
-    // Parse frontmatter
+    // Parse frontmatter and content
     const { data, content } = matter(text);
     
     // Compile MDX content
@@ -33,13 +33,14 @@ async function fetchMDXFile(filename: string) {
       remarkPlugins: [remarkFrontmatter]
     }));
 
+    // Return article with frontmatter data and compiled content
     return {
-      title: data.title,
-      date: data.date,
-      excerpt: data.excerpt,
-      author: data.author,
-      readTime: data.readTime,
-      image: data.image,
+      title: data.title || "",
+      date: data.date || "",
+      excerpt: data.excerpt || "",
+      author: data.author || "",
+      readTime: data.readTime || "",
+      image: data.image || "",
       content: compiledContent
     } as Article;
   } catch (error) {
@@ -52,7 +53,6 @@ export const useArticles = () => {
   return useQuery({
     queryKey: ["articles"],
     queryFn: async (): Promise<Article[]> => {
-      // For now, we'll fetch the single article we know exists
       const article = await fetchMDXFile('introduction-to-stoicism.mdx');
       return [article];
     }
