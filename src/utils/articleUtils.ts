@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { compile } from "@mdx-js/mdx";
 import remarkFrontmatter from 'remark-frontmatter';
+import matter from 'gray-matter';
 import * as runtime from "react/jsx-runtime";
 
 interface Article {
@@ -22,26 +23,11 @@ async function fetchMDXFile(filename: string) {
     }
     const text = await response.text();
     
-    // Extract frontmatter using regex
-    const frontmatterRegex = /---\n([\s\S]*?)\n---/;
-    const match = text.match(frontmatterRegex);
-    const frontmatter = match ? match[1] : '';
+    // Parse frontmatter using gray-matter
+    const { data, content } = matter(text);
     
-    // Parse frontmatter
-    const metadata: Partial<Article> = {};
-    frontmatter.split('\n').forEach(line => {
-      const [key, ...valueParts] = line.split(':');
-      if (key && valueParts.length) {
-        const value = valueParts.join(':').trim().replace(/^"(.*)"$/, '$1');
-        metadata[key.trim() as keyof Article] = value;
-      }
-    });
-
-    // Remove frontmatter from content
-    const contentWithoutFrontmatter = text.replace(frontmatterRegex, '').trim();
-
-    // Compile MDX content with remark-frontmatter plugin
-    const result = await compile(contentWithoutFrontmatter, {
+    // Compile MDX content
+    const result = await compile(content, {
       outputFormat: 'function-body',
       pragma: 'React.createElement',
       pragmaFrag: 'React.Fragment',
@@ -49,7 +35,12 @@ async function fetchMDXFile(filename: string) {
     });
 
     return {
-      ...metadata,
+      title: data.title,
+      date: data.date,
+      excerpt: data.excerpt,
+      author: data.author,
+      readTime: data.readTime,
+      image: data.image,
       content: String(result.value)
     } as Article;
   } catch (error) {
