@@ -23,14 +23,14 @@ async function fetchMDXFile(filename: string) {
     }
     const text = await response.text();
     
-    // Parse frontmatter using gray-matter
+    // Parse frontmatter
     const { data, content } = matter(text);
     
     // Compile MDX content
-    const result = await compile(content, {
-      outputFormat: 'function-body',
-      pragma: 'React.createElement',
-      pragmaFrag: 'React.Fragment',
+    const compiledContent = await compile(content, {
+      jsx: true,
+      jsxRuntime: "automatic",
+      jsxImportSource: "react",
       remarkPlugins: [remarkFrontmatter]
     });
 
@@ -41,7 +41,7 @@ async function fetchMDXFile(filename: string) {
       author: data.author,
       readTime: data.readTime,
       image: data.image,
-      content: String(result.value)
+      content: String(compiledContent)
     } as Article;
   } catch (error) {
     console.error('Error fetching MDX file:', error);
